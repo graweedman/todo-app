@@ -6,7 +6,13 @@
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-import { createTodoHandler, deleteTodoHandler, getTodoHandler, getTodosHandler, updateTodoHandler } from "./todos";
+import {
+    createTodoHandler,
+    deleteTodoHandler,
+    getTodoHandler,
+    getTodosHandler,
+    updateTodoHandler,
+} from "./todos";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
