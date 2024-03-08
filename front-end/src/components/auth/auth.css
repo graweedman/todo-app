@@ -1,0 +1,48 @@
+.authentication-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 50px;
+    border: 3px solid #f1f1f1;
+    border-radius: 10px;
+    color: #3f3f3f;
+    background-color: white;
+    z-index: 9;
+    padding: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 400px;
+}
+li {
+    display: inline-flex;
+}
+
+li button {
+    display: block;
+    padding: 8px;
+    background-color: #dddddd;
+}
+
+.form-container {
+    max-width: 400px;
+    padding: 10px;
+    background-color: white;
+    color: black;
+    box-sizing: border-box;
+}
+
+.form-container input[type=text], .form-container input[type=email], .form-container input[type=password] {
+    width: 90%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #f1f1f1;
+}
+
+.profile-icon {
+    cursor: pointer;
+}
