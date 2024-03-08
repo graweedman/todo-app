@@ -5,7 +5,6 @@ import {logger} from "firebase-functions/v1";
 admin.initializeApp();
 
 const db = admin.firestore();
-const auth = admin.auth();
 const todosCollection = db.collection("todos");
 
 interface Todo {
@@ -20,10 +19,13 @@ export const createTodoHandler = onCall(async (request) => {
         throw new HttpsError("unauthenticated", "Not authenticated");
     }
     try {
+        const user = request.auth;
         const {title, userId}: Todo = request.data;
-        const user = await auth.getUser(userId);
-        if (!user) {
-            throw new Error("User not found");
+        if (userId !== user.uid) {
+            throw new HttpsError(
+                "invalid-argument",
+                "User id must be the same as the authenticated user"
+            );
         }
         const newTodo = await todosCollection.add({
             title,
@@ -82,8 +84,22 @@ export const updateTodoHandler = onCall(async (request) => {
         throw new HttpsError("unauthenticated", "Not authenticated");
     }
     try {
+        const user = request.auth;
         const {id, title, completed}: Todo = request.data;
         const todo = todosCollection.doc(id);
+        const todoData = await todo.get();
+        if (!todo) {
+            throw new HttpsError("not-found", "Todo not found");
+        }
+        if (title === "") {
+            throw new HttpsError("invalid-argument", "Title cannot be empty");
+        }
+        if (user.uid !== todoData.data()?.userId) {
+            throw new HttpsError(
+                "permission-denied",
+                "User does not have permission to update this todo"
+            );
+        }
         await todo.update({title, completed});
         return {result: "Todo updated"};
     } catch (error) {
@@ -98,8 +114,19 @@ export const deleteTodoHandler = onCall(async (request) => {
         throw new HttpsError("unauthenticated", "Not authenticated");
     }
     try {
+        const user = request.auth;
         const {id} = request.data;
         const todo = todosCollection.doc(id);
+        const todoData = await todo.get();
+        if (!todo) {
+            throw new HttpsError("not-found", "Todo not found");
+        }
+        if (user.uid !== todoData.data()?.userId) {
+            throw new HttpsError(
+                "permission-denied",
+                "User does not have permission to delete this todo"
+            );
+        }
         await todo.delete();
         return {result: "Todo deleted"};
     } catch (error) {
